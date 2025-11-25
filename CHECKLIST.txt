@@ -1,0 +1,263 @@
+📋 CHECKLIST SETUP CINEMAX - Aplikasi Pemesanan Tiket Bioskop
+
+═══════════════════════════════════════════════════════════════════
+
+📦 PERSIAPAN AWAL
+═══════════════════════════════════════════════════════════════════
+
+□ PostgreSQL sudah terinstall
+  Versi: _____________
+  Port: 5432 (default)
+  
+□ pgAdmin sudah terinstall dan bisa dibuka
+
+□ Eclipse/IDE sudah terinstall
+
+□ Apache Tomcat sudah dikonfigurasi di Eclipse
+
+═══════════════════════════════════════════════════════════════════
+
+🗄️ DATABASE SETUP
+═══════════════════════════════════════════════════════════════════
+
+□ Buka pgAdmin
+
+□ Database "cinemax_db" sudah dibuat
+  Owner: postgres
+  
+□ File schema.sql sudah di-import ke database
+  Lokasi file: database/schema.sql
+  
+□ Verifikasi data sudah masuk:
+  □ Tabel movies ada (10 film)
+  □ Tabel categories ada
+  □ Tabel schedules ada
+  □ Tabel seats ada
+  □ Tabel theaters ada
+  
+□ Password PostgreSQL dicatat:
+  Password: _________________________
+
+═══════════════════════════════════════════════════════════════════
+
+📚 DEPENDENCIES
+═══════════════════════════════════════════════════════════════════
+
+□ Download postgresql-42.7.1.jar
+  Link: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.1/postgresql-42.7.1.jar
+  
+□ Download gson-2.10.1.jar
+  Link: https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar
+  
+□ Kedua JAR file disimpan di:
+  src/main/webapp/WEB-INF/lib/
+  
+□ Verify file ada:
+  □ WEB-INF/lib/postgresql-42.7.1.jar ✓
+  □ WEB-INF/lib/gson-2.10.1.jar ✓
+
+═══════════════════════════════════════════════════════════════════
+
+⚙️ KONFIGURASI
+═══════════════════════════════════════════════════════════════════
+
+□ Edit DatabaseConnection.java
+  Lokasi: src/main/java/com/cinemax/util/DatabaseConnection.java
+  
+□ Ganti password di baris:
+  private static final String PASSWORD = "_______";
+  
+□ Simpan file
+
+═══════════════════════════════════════════════════════════════════
+
+🔨 ECLIPSE CONFIGURATION
+═══════════════════════════════════════════════════════════════════
+
+□ Project di-refresh (F5)
+
+□ JAR files ditambahkan ke Build Path:
+  □ Klik kanan project
+  □ Build Path → Configure Build Path
+  □ Libraries → Add JARs
+  □ Pilih kedua JAR dari WEB-INF/lib
+  □ Apply and Close
+  
+□ Verify di "Referenced Libraries":
+  □ postgresql-42.7.1.jar muncul
+  □ gson-2.10.1.jar muncul
+  
+□ Clean Project:
+  □ Project → Clean
+  □ Pilih project
+  □ Clean
+  
+□ Tidak ada compile error (check Problems tab)
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 RUNNING & TESTING
+═══════════════════════════════════════════════════════════════════
+
+□ PostgreSQL service sedang running
+  (Check di Services Windows)
+  
+□ Tomcat server dikonfigurasi di Eclipse
+
+□ Run project:
+  □ Klik kanan project
+  □ Run As → Run on Server
+  □ Pilih Tomcat
+  □ Finish
+  
+□ Test Database Connection:
+  URL: http://localhost:8080/pemesanan-tikek-bioskop/test-connection.jsp
+  □ Status: "Database Connected Successfully!" ✓
+  
+□ Test API Movies:
+  URL: http://localhost:8080/pemesanan-tikek-bioskop/api/movies
+  □ Response: JSON dengan list movies ✓
+  
+□ Test API Categories:
+  URL: http://localhost:8080/pemesanan-tikek-bioskop/api/categories
+  □ Response: JSON dengan list categories ✓
+  
+□ Buka Aplikasi Utama:
+  URL: http://localhost:8080/pemesanan-tikek-bioskop/
+  □ Homepage muncul dengan desain modern ✓
+  □ Hero carousel berfungsi ✓
+  □ Daftar film muncul ✓
+
+═══════════════════════════════════════════════════════════════════
+
+✅ VERIFIKASI FITUR
+═══════════════════════════════════════════════════════════════════
+
+□ Navigation bar berfungsi
+  □ Logo terlihat
+  □ Menu navigasi berfungsi
+  □ Search bar muncul saat diklik
+  □ Mobile menu berfungsi
+  
+□ Hero Section
+  □ 3 film featured muncul
+  □ Auto-play carousel berfungsi
+  □ Tombol navigasi berfungsi
+  □ Tombol "Pesan Sekarang" berfungsi
+  
+□ Filter Kategori
+  □ Semua kategori muncul
+  □ Filter kategori berfungsi
+  □ Kembali ke "Semua" berfungsi
+  
+□ Search
+  □ Search bar muncul
+  □ Pencarian film berfungsi
+  □ Hasil pencarian akurat
+  
+□ Movie Grid
+  □ 10 film muncul dari database
+  □ Poster terlihat
+  □ Rating muncul
+  □ Hover effect berfungsi
+  
+□ Movie Detail Modal
+  □ Klik film membuka modal
+  □ Detail film muncul lengkap
+  □ Sinopsis terlihat
+  □ Genre muncul
+  
+□ Seat Selection
+  □ Tombol "Pilih Kursi" berfungsi
+  □ Layout kursi muncul
+  □ Kursi bisa dipilih
+  □ Status kursi berubah (available→selected)
+  □ Ringkasan pesanan muncul
+  □ Total harga dihitung otomatis
+  
+□ Booking
+  □ Tombol "Konfirmasi Pesanan" berfungsi
+  □ Success modal muncul
+  □ Booking berhasil
+  
+□ Responsive Design
+  □ Tampilan mobile baik
+  □ Tampilan tablet baik
+  □ Tampilan desktop baik
+
+═══════════════════════════════════════════════════════════════════
+
+📊 DATABASE VERIFICATION
+═══════════════════════════════════════════════════════════════════
+
+□ Buka pgAdmin → cinemax_db → Query Tool
+
+□ Jalankan query untuk cek data:
+  
+  -- Cek jumlah movies
+  SELECT COUNT(*) FROM movies;
+  □ Result: 10 rows ✓
+  
+  -- Cek categories
+  SELECT * FROM categories;
+  □ Result: 10 categories ✓
+  
+  -- Cek schedules
+  SELECT * FROM schedules;
+  □ Result: ada jadwal ✓
+  
+  -- Cek seats
+  SELECT COUNT(*) FROM seats;
+  □ Result: 800 seats (10 schedules × 80 seats) ✓
+
+═══════════════════════════════════════════════════════════════════
+
+🐛 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+Jika ada masalah, cek:
+
+□ README.md untuk dokumentasi lengkap
+□ QUICKSTART.md untuk panduan cepat
+□ DEPENDENCIES.md untuk download dependencies
+□ test-connection.jsp untuk test koneksi database
+
+Common Issues:
+
+□ Error "ClassNotFoundException"
+  → JAR belum ditambahkan ke Build Path
+  
+□ Error "Connection refused"
+  → PostgreSQL service belum running
+  
+□ Error "Password authentication failed"
+  → Password salah di DatabaseConnection.java
+  
+□ Error "Database not found"
+  → Database cinemax_db belum dibuat
+  
+□ Compile error
+  → Clean project & rebuild
+
+═══════════════════════════════════════════════════════════════════
+
+📝 NOTES
+═══════════════════════════════════════════════════════════════════
+
+Tanggal Setup: _______________
+
+Masalah yang ditemui:
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+Solusi:
+_________________________________________________________________
+_________________________________________________________________
+_________________________________________________________________
+
+═══════════════════════════════════════════════════════════════════
+
+✨ SELAMAT! Aplikasi CinemaX sudah siap digunakan! ✨
+
+═══════════════════════════════════════════════════════════════════
