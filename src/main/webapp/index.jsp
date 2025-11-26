@@ -176,7 +176,7 @@
                             <!-- Admin Menu -->
                             <template x-if="currentUser?.role === 'admin'">
                                 <div class="border-b border-slate-700">
-                                    <a href="admin.jsp" 
+                                    <a href="admin/movies.jsp" 
                                        class="block px-4 py-2 hover:bg-slate-700 transition">
                                         <i class="fas fa-cog mr-2"></i> Panel Admin
                                     </a>
@@ -287,7 +287,7 @@
                                             class="px-8 py-4 btn-primary rounded-lg font-semibold text-lg shadow-xl">
                                         <i class="fas fa-ticket-alt mr-2"></i> Pesan Sekarang
                                     </button>
-                                    <button @click="selectMovie(movie); showTrailer = true" 
+                                    <button @click="openTrailer(movie)" 
                                             class="px-8 py-4 bg-white/20 backdrop-blur-sm rounded-lg font-semibold text-lg hover:bg-white/30 transition">
                                         <i class="fas fa-play mr-2"></i> Tonton Trailer
                                     </button>
@@ -751,7 +751,7 @@
                                 <i class="fas fa-check mr-2"></i> 
                                 <span x-text="loading ? 'Processing...' : 'Konfirmasi Pesanan'"></span>
                             </button>
-                            <button @click="showTrailer = true"
+                            <button @click="openTrailer(selectedMovie)"
                                     class="px-8 py-4 bg-slate-800 rounded-xl font-semibold hover:bg-slate-700 transition">
                                 <i class="fas fa-play mr-2"></i> Trailer
                             </button>
@@ -765,24 +765,63 @@
     <!-- Trailer Modal -->
     <div x-show="showTrailer" 
          x-cloak
-         @click.self="showTrailer = false"
+         @click.self="closeTrailer()"
          class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
          x-transition>
-        <div class="bg-slate-900 rounded-2xl max-w-4xl w-full p-4"
+        <div class="bg-slate-900 rounded-2xl max-w-5xl w-full p-6"
              @click.stop
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
              x-transition:enter-end="opacity-100 transform scale-100">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Trailer</h3>
-                <button @click="showTrailer = false" 
+                <h3 class="text-2xl font-bold" x-text="selectedMovie?.title + ' - Trailer'"></h3>
+                <button @click="closeTrailer()" 
                         class="w-10 h-10 bg-slate-800 rounded-full hover:bg-slate-700 transition">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="aspect-video bg-slate-800 rounded-xl flex items-center justify-center">
-                <i class="fas fa-play-circle text-6xl text-gray-600"></i>
-                <p class="ml-4 text-gray-400">Trailer video akan ditampilkan di sini</p>
+            <div class="aspect-video bg-slate-800 rounded-xl overflow-hidden">
+                <template x-if="trailerEmbedUrl">
+                    <div class="w-full h-full relative">
+                        <iframe :src="trailerEmbedUrl" 
+                                class="w-full h-full"
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                @error="console.error('YouTube iframe error')">
+                        </iframe>
+                        <div x-show="false" class="absolute inset-0 bg-slate-800 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                                <p class="text-white mb-2">Video tidak dapat dimuat</p>
+                                <p class="text-sm text-gray-400">Video mungkin dibatasi untuk ditonton di website lain</p>
+                                <a :href="selectedMovie?.trailerUrl" target="_blank" 
+                                   class="mt-4 inline-block px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                    <i class="fab fa-youtube mr-2"></i>Tonton di YouTube
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template x-if="!trailerEmbedUrl">
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-film text-6xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">Trailer tidak tersedia</p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Alternative: Open in YouTube button -->
+            <div x-show="trailerEmbedUrl" class="mt-4 text-center">
+                <p class="text-sm text-gray-400 mb-2">Video tidak muncul?</p>
+                <a :href="selectedMovie?.trailerUrl" target="_blank" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <i class="fab fa-youtube"></i>
+                    <span>Tonton di YouTube</span>
+                    <i class="fas fa-external-link-alt text-sm"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -1056,6 +1095,7 @@
                 selectedMovieId: null, // Track selected movie ID for validation
                 showSeatSelection: false,
                 showTrailer: false,
+                trailerEmbedUrl: '',
                 showSuccess: false,
                 showLoginModal: false,
                 showPaymentModal: false,
@@ -1147,6 +1187,7 @@
                         description: movie.description,
                         poster: movie.posterUrl,
                         backdrop: movie.backdropUrl,
+                        trailerUrl: movie.trailerUrl,
                         genre: movie.genres || [],
                         director: movie.director,
                         isNew: movie.new
@@ -1504,6 +1545,61 @@
                     return 'Rp ' + price.toLocaleString('id-ID');
                 },
                 
+                // Open trailer modal
+                openTrailer(movie) {
+                    console.log('Opening trailer for:', movie.title);
+                    console.log('Trailer URL:', movie.trailerUrl);
+                    
+                    if (!movie.trailerUrl || movie.trailerUrl.trim() === '') {
+                        alert('Trailer tidak tersedia untuk film ini');
+                        return;
+                    }
+                    
+                    this.selectedMovie = movie;
+                    this.trailerEmbedUrl = this.getYouTubeEmbedUrl(movie.trailerUrl);
+                    
+                    console.log('Embed URL:', this.trailerEmbedUrl);
+                    
+                    if (!this.trailerEmbedUrl) {
+                        alert('Format URL trailer tidak valid. Gunakan link YouTube.');
+                        return;
+                    }
+                    
+                    this.showTrailer = true;
+                },
+                
+                // Close trailer modal
+                closeTrailer() {
+                    this.showTrailer = false;
+                    this.trailerEmbedUrl = '';
+                },
+                
+                // Convert YouTube URL to embed URL
+                getYouTubeEmbedUrl(url) {
+                    if (!url) return '';
+                    
+                    console.log('Converting URL:', url);
+                    let videoId = '';
+                    
+                    // Extract YouTube video ID from various formats
+                    if (url.includes('youtube.com/watch?v=')) {
+                        videoId = url.split('v=')[1]?.split('&')[0];
+                    } else if (url.includes('youtu.be/')) {
+                        videoId = url.split('youtu.be/')[1]?.split('?')[0];
+                    } else if (url.includes('youtube.com/embed/')) {
+                        videoId = url.split('embed/')[1]?.split('?')[0];
+                    }
+                    
+                    console.log('Extracted video ID:', videoId);
+                    
+                    if (videoId) {
+                        // Add parameters for better embed experience
+                        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+                    }
+                    
+                    return '';
+                },
+                
                 // ==================== AUTH FUNCTIONS ====================
                 
                 // Check session - auto login if session exists
@@ -1544,7 +1640,7 @@
                         if (result.success) {
                             this.currentUser = result.user;
                             this.showLoginModal = false;
-                            alert('Login berhasil! Selamat datang ' + (result.user.fullName || result.user.username));
+                            // alert('Login berhasil! Selamat datang ' + (result.user.fullName || result.user.username));
                         } else {
                             alert(result.error || 'Login gagal');
                         }

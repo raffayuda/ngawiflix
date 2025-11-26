@@ -1,0 +1,591 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    // Check if user is logged in and is admin
+    session = request.getSession(false);
+    if (session == null || session.getAttribute("user") == null) {
+        response.sendRedirect("../index.jsp");
+        return;
+    }
+    
+    String userRole = (String) session.getAttribute("role");
+    if (!"admin".equals(userRole)) {
+        response.sendRedirect("../index.jsp");
+        return;
+    }
+%>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies Management - CinemaX Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div x-data="moviesAdmin()" class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <i class="fas fa-film text-red-500 text-2xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">CinemaX</h1>
+                        <p class="text-sm text-gray-400">Admin Panel</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="../admin.jsp" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="movies.jsp" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-600 transition">
+                        <i class="fas fa-film w-5"></i>
+                        <span>Movies</span>
+                    </a>
+                    <a href="schedules.jsp" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-calendar w-5"></i>
+                        <span>Schedules</span>
+                    </a>
+                    <a href="theaters.jsp" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-building w-5"></i>
+                        <span>Theaters</span>
+                    </a>
+                    <a href="categories.jsp" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-tags w-5"></i>
+                        <span>Categories</span>
+                    </a>
+                </nav>
+                
+                <div class="mt-auto pt-6 border-t border-gray-700">
+                    <a href="../index.jsp" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-arrow-left w-5"></i>
+                        <span>Back to Home</span>
+                    </a>
+                    <button @click="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Header -->
+            <div class="bg-white shadow-md p-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Movies Management</h2>
+                    <p class="text-gray-600">Manage all movies in the system</p>
+                </div>
+                <button @click="openAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Movie</span>
+                </button>
+            </div>
+
+            <!-- Movies Table -->
+            <div class="p-6">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <!-- Search and Filter -->
+                    <div class="p-4 border-b flex gap-4">
+                        <div class="flex-1">
+                            <input type="text" x-model="searchQuery" @input="searchMovies()" 
+                                   placeholder="Search movies..." 
+                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        </div>
+                        <select x-model="filterCategory" @change="filterMovies()" 
+                                class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                            <option value="">All Categories</option>
+                            <template x-for="category in categories" :key="category.categoryId">
+                                <option :value="category.categoryId" x-text="category.name"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Poster</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Director</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <template x-if="loading">
+                                    <tr>
+                                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                                            <p>Loading movies...</p>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-if="!loading && filteredMovies.length === 0">
+                                    <tr>
+                                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                                            <i class="fas fa-film text-4xl mb-2"></i>
+                                            <p>No movies found</p>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-for="movie in filteredMovies" :key="movie.movieId">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4">
+                                            <img :src="movie.posterUrl" :alt="movie.title" 
+                                                 class="w-16 h-24 object-cover rounded">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-medium text-gray-900" x-text="movie.title"></div>
+                                            <div class="text-sm text-gray-500" x-text="movie.rated"></div>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-900" x-text="movie.director"></td>
+                                        <td class="px-6 py-4 text-sm text-gray-900" x-text="movie.duration + ' min'"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-star text-yellow-500"></i>
+                                                <span class="text-sm font-medium" x-text="movie.rating"></span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-900" x-text="movie.releaseYear"></td>
+                                        <td class="px-6 py-4">
+                                            <span x-show="movie.isNew" class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                                New
+                                            </span>
+                                            <span x-show="movie.isFeatured" class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 ml-1">
+                                                Featured
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex gap-2">
+                                                <button @click="openEditModal(movie)" 
+                                                        class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button @click="confirmDelete(movie)" 
+                                                        class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
+             style="display: none;">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+                <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white">
+                    <h3 class="text-xl font-bold" x-text="isEditMode ? 'Edit Movie' : 'Add New Movie'"></h3>
+                    <button @click="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form @submit.prevent="saveMovie()" class="p-6">
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Left Column -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                                <input type="text" x-model="formData.title" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Director *</label>
+                                <input type="text" x-model="formData.director" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Duration (min) *</label>
+                                    <input type="number" x-model="formData.duration" required min="1"
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Rating *</label>
+                                    <input type="number" x-model="formData.rating" required min="0" max="10" step="0.1"
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Rated *</label>
+                                    <select x-model="formData.rated" required
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                        <option value="">Select Rating</option>
+                                        <option value="SU">SU</option>
+                                        <option value="13+">13+</option>
+                                        <option value="17+">17+</option>
+                                        <option value="21+">21+</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Release Year *</label>
+                                    <input type="number" x-model="formData.releaseYear" required min="1900" max="2100"
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                                <textarea x-model="formData.description" required rows="4"
+                                          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Poster URL *</label>
+                                <input type="url" x-model="formData.posterUrl" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                <img x-show="formData.posterUrl" :src="formData.posterUrl" 
+                                     class="mt-2 w-32 h-48 object-cover rounded">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Backdrop URL *</label>
+                                <input type="url" x-model="formData.backdropUrl" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                <img x-show="formData.backdropUrl" :src="formData.backdropUrl" 
+                                     class="mt-2 w-full h-24 object-cover rounded">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Trailer URL</label>
+                                <input type="url" x-model="formData.trailerUrl"
+                                       @input="updateTrailerPreview()"
+                                       placeholder="https://youtube.com/watch?v=... or https://youtu.be/..."
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
+                                <p class="text-xs text-gray-500 mt-1">YouTube or video URL for movie trailer</p>
+                                
+                                <!-- Trailer Preview -->
+                                <div x-show="formData.trailerUrl && trailerEmbedUrl" class="mt-3">
+                                    <p class="text-xs font-medium text-gray-700 mb-2">Preview:</p>
+                                    <iframe :src="trailerEmbedUrl" 
+                                            class="w-full h-48 rounded-lg border"
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Categories</label>
+                                <div class="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-3">
+                                    <template x-for="category in categories" :key="category.categoryId">
+                                        <label class="flex items-center gap-2">
+                                            <input type="checkbox" :value="category.categoryId" 
+                                                   x-model="formData.categories"
+                                                   class="rounded text-red-600 focus:ring-red-500">
+                                            <span x-text="category.name"></span>
+                                        </label>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" x-model="formData.isNew"
+                                           class="rounded text-red-600 focus:ring-red-500">
+                                    <span class="text-sm font-medium text-gray-700">Mark as New</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" x-model="formData.isFeatured"
+                                           class="rounded text-red-600 focus:ring-red-500">
+                                    <span class="text-sm font-medium text-gray-700">Mark as Featured</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end gap-3 border-t pt-4">
+                        <button type="button" @click="closeModal()" 
+                                class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" 
+                                class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                            <span x-text="isEditMode ? 'Update Movie' : 'Add Movie'"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div x-show="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
+             style="display: none;">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-5xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Delete Movie?</h3>
+                    <p class="text-gray-600 mb-6">
+                        Are you sure you want to delete "<span x-text="movieToDelete?.title"></span>"? 
+                        This action cannot be undone.
+                    </p>
+                    <div class="flex gap-3 justify-center">
+                        <button @click="showDeleteModal = false" 
+                                class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button @click="deleteMovie()" 
+                                class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function moviesAdmin() {
+            return {
+                movies: [],
+                filteredMovies: [],
+                categories: [],
+                loading: false,
+                showModal: false,
+                showDeleteModal: false,
+                isEditMode: false,
+                searchQuery: '',
+                filterCategory: '',
+                movieToDelete: null,
+                trailerEmbedUrl: '',
+                formData: {
+                    movieId: null,
+                    title: '',
+                    director: '',
+                    duration: '',
+                    rating: '',
+                    rated: '',
+                    releaseYear: new Date().getFullYear(),
+                    description: '',
+                    posterUrl: '',
+                    backdropUrl: '',
+                    trailerUrl: '',
+                    isNew: false,
+                    isFeatured: false,
+                    categories: []
+                },
+
+                init() {
+                    this.loadMovies();
+                    this.loadCategories();
+                },
+
+                async loadMovies() {
+                    try {
+                        this.loading = true;
+                        const response = await fetch('../api/movies');
+                        this.movies = await response.json();
+                        this.filteredMovies = this.movies;
+                    } catch (error) {
+                        console.error('Error loading movies:', error);
+                        alert('Failed to load movies');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async loadCategories() {
+                    try {
+                        const response = await fetch('../api/categories');
+                        this.categories = await response.json();
+                    } catch (error) {
+                        console.error('Error loading categories:', error);
+                    }
+                },
+
+                searchMovies() {
+                    this.filterMovies();
+                },
+
+                filterMovies() {
+                    let filtered = this.movies;
+
+                    // Filter by search query
+                    if (this.searchQuery) {
+                        filtered = filtered.filter(movie => 
+                            movie.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                            movie.director.toLowerCase().includes(this.searchQuery.toLowerCase())
+                        );
+                    }
+
+                    // Filter by category
+                    if (this.filterCategory) {
+                        filtered = filtered.filter(movie => 
+                            movie.categories && movie.categories.includes(parseInt(this.filterCategory))
+                        );
+                    }
+
+                    this.filteredMovies = filtered;
+                },
+
+                openAddModal() {
+                    this.isEditMode = false;
+                    this.resetForm();
+                    this.showModal = true;
+                },
+
+                openEditModal(movie) {
+                    this.isEditMode = true;
+                    this.formData = {
+                        movieId: movie.movieId,
+                        title: movie.title,
+                        director: movie.director,
+                        duration: movie.duration,
+                        rating: movie.rating,
+                        rated: movie.rated,
+                        releaseYear: movie.releaseYear,
+                        description: movie.description,
+                        posterUrl: movie.posterUrl,
+                        backdropUrl: movie.backdropUrl,
+                        trailerUrl: movie.trailerUrl || '',
+                        isNew: movie.isNew || false,
+                        isFeatured: movie.isFeatured || false,
+                        categories: movie.categories || []
+                    };
+                    this.updateTrailerPreview();
+                    this.showModal = true;
+                },
+
+                closeModal() {
+                    this.showModal = false;
+                    this.resetForm();
+                },
+
+                updateTrailerPreview() {
+                    if (!this.formData.trailerUrl) {
+                        this.trailerEmbedUrl = '';
+                        return;
+                    }
+                    
+                    const url = this.formData.trailerUrl.trim();
+                    let videoId = '';
+                    
+                    console.log('Preview URL:', url);
+                    
+                    // Extract YouTube video ID from various formats
+                    if (url.includes('youtube.com/watch?v=')) {
+                        videoId = url.split('v=')[1]?.split('&')[0];
+                    } else if (url.includes('youtu.be/')) {
+                        videoId = url.split('youtu.be/')[1]?.split('?')[0];
+                    } else if (url.includes('youtube.com/embed/')) {
+                        videoId = url.split('embed/')[1]?.split('?')[0];
+                    }
+                    
+                    console.log('Extracted video ID:', videoId);
+                    
+                    if (videoId) {
+                        this.trailerEmbedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    } else {
+                        this.trailerEmbedUrl = '';
+                        console.warn('Invalid YouTube URL format');
+                    }
+                },
+
+                resetForm() {
+                    this.formData = {
+                        movieId: null,
+                        title: '',
+                        director: '',
+                        duration: '',
+                        rating: '',
+                        rated: '',
+                        releaseYear: new Date().getFullYear(),
+                        description: '',
+                        posterUrl: '',
+                        backdropUrl: '',
+                        trailerUrl: '',
+                        isNew: false,
+                        isFeatured: false,
+                        categories: []
+                    };
+                    this.trailerEmbedUrl = '';
+                },
+
+                async saveMovie() {
+                    try {
+                        const url = this.isEditMode 
+                            ? `../api/movies?id=` + this.formData.movieId
+                            : '../api/movies';
+                        
+                        const method = this.isEditMode ? 'PUT' : 'POST';
+
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.formData)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to save movie');
+                        }
+
+                        alert(this.isEditMode ? 'Movie updated successfully' : 'Movie added successfully');
+                        this.closeModal();
+                        this.loadMovies();
+                    } catch (error) {
+                        console.error('Error saving movie:', error);
+                        alert('Failed to save movie');
+                    }
+                },
+
+                confirmDelete(movie) {
+                    this.movieToDelete = movie;
+                    this.showDeleteModal = true;
+                },
+
+                async deleteMovie() {
+                    try {
+                        const response = await fetch(`../api/movies?id=` + this.movieToDelete.movieId, {
+                            method: 'DELETE'
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to delete movie');
+                        }
+
+                        alert('Movie deleted successfully');
+                        this.showDeleteModal = false;
+                        this.movieToDelete = null;
+                        this.loadMovies();
+                    } catch (error) {
+                        console.error('Error deleting movie:', error);
+                        alert('Failed to delete movie');
+                    }
+                },
+
+                logout() {
+                    if (confirm('Are you sure you want to logout?')) {
+                        window.location.href = '../api/auth?action=logout';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

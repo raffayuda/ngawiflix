@@ -18,6 +18,7 @@ public class Movie {
     private boolean isNew;
     private boolean isFeatured;
     private List<String> genres;
+    private List<Integer> categories; // Category IDs for CRUD operations
     private Timestamp createdAt;
     private Timestamp updatedAt;
     
@@ -152,6 +153,14 @@ public class Movie {
     
     public void setGenres(List<String> genres) {
         this.genres = genres;
+    }
+    
+    public List<Integer> getCategories() {
+        return categories;
+    }
+    
+    public void setCategories(List<Integer> categories) {
+        this.categories = categories;
     }
     
     public Timestamp getCreatedAt() {

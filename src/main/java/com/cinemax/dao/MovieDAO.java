@@ -145,4 +145,116 @@ public class MovieDAO {
         
         return movie;
     }
+    
+    public boolean createMovie(Movie movie) throws SQLException {
+        String sql = "INSERT INTO movies (title, description, poster_url, backdrop_url, trailer_url, " +
+                     "director, duration, rating, rated, release_year, is_new, is_featured) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING movie_id";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, movie.getTitle());
+            pstmt.setString(2, movie.getDescription());
+            pstmt.setString(3, movie.getPosterUrl());
+            pstmt.setString(4, movie.getBackdropUrl());
+            pstmt.setString(5, movie.getTrailerUrl());
+            pstmt.setString(6, movie.getDirector());
+            pstmt.setInt(7, movie.getDuration());
+            pstmt.setDouble(8, movie.getRating());
+            pstmt.setString(9, movie.getRated());
+            pstmt.setInt(10, movie.getReleaseYear());
+            pstmt.setBoolean(11, movie.isNew());
+            pstmt.setBoolean(12, movie.isFeatured());
+            
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int movieId = rs.getInt("movie_id");
+                
+                // Insert movie categories if provided
+                if (movie.getCategories() != null && !movie.getCategories().isEmpty()) {
+                    insertMovieCategories(conn, movieId, movie.getCategories());
+                }
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean updateMovie(Movie movie) throws SQLException {
+        String sql = "UPDATE movies SET title = ?, description = ?, poster_url = ?, backdrop_url = ?, " +
+                     "trailer_url = ?, director = ?, duration = ?, rating = ?, rated = ?, " +
+                     "release_year = ?, is_new = ?, is_featured = ? WHERE movie_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, movie.getTitle());
+            pstmt.setString(2, movie.getDescription());
+            pstmt.setString(3, movie.getPosterUrl());
+            pstmt.setString(4, movie.getBackdropUrl());
+            pstmt.setString(5, movie.getTrailerUrl());
+            pstmt.setString(6, movie.getDirector());
+            pstmt.setInt(7, movie.getDuration());
+            pstmt.setDouble(8, movie.getRating());
+            pstmt.setString(9, movie.getRated());
+            pstmt.setInt(10, movie.getReleaseYear());
+            pstmt.setBoolean(11, movie.isNew());
+            pstmt.setBoolean(12, movie.isFeatured());
+            pstmt.setInt(13, movie.getMovieId());
+            
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                // Update movie categories
+                deleteMovieCategories(conn, movie.getMovieId());
+                if (movie.getCategories() != null && !movie.getCategories().isEmpty()) {
+                    insertMovieCategories(conn, movie.getMovieId(), movie.getCategories());
+                }
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean deleteMovie(int movieId) throws SQLException {
+        String sql = "DELETE FROM movies WHERE movie_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            // First delete movie categories
+            deleteMovieCategories(conn, movieId);
+            
+            pstmt.setInt(1, movieId);
+            int rowsAffected = pstmt.executeUpdate();
+            
+            return rowsAffected > 0;
+        }
+    }
+    
+    private void insertMovieCategories(Connection conn, int movieId, List<Integer> categoryIds) throws SQLException {
+        String sql = "INSERT INTO movie_categories (movie_id, category_id) VALUES (?, ?)";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (Integer categoryId : categoryIds) {
+                pstmt.setInt(1, movieId);
+                pstmt.setInt(2, categoryId);
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+        }
+    }
+    
+    private void deleteMovieCategories(Connection conn, int movieId) throws SQLException {
+        String sql = "DELETE FROM movie_categories WHERE movie_id = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, movieId);
+            pstmt.executeUpdate();
+        }
+    }
 }
