@@ -311,10 +311,11 @@
                                 <div class="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-3">
                                     <template x-for="category in categories" :key="category.categoryId">
                                         <label class="flex items-center gap-2">
-                                            <input type="checkbox" :value="category.categoryId" 
+                                            <input type="checkbox" 
+                                                   :value="parseInt(category.categoryId)" 
                                                    x-model="formData.categories"
                                                    class="rounded text-red-600 focus:ring-red-500">
-                                            <span x-text="category.categoryName"></span>
+                                            <span class="capitalize" x-text="category.categoryName"></span>
                                         </label>
                                     </template>
                                 </div>
@@ -382,7 +383,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 transform translate-x-0"
              x-transition:leave-end="opacity-0 transform translate-x-full"
-             class="fixed top-4 right-4 z-50 max-w-sm w-full"
+             class="fixed bottom-4 right-4 z-50 max-w-sm w-full"
              style="display: none;">
             <div class="rounded-lg shadow-lg p-4 flex items-center gap-3"
                  :class="{
@@ -502,7 +503,22 @@
                 },
 
                 openEditModal(movie) {
+                    console.log('Opening edit modal for movie:', movie);
+                    console.log('Movie categories:', movie.categories);
+                    
                     this.isEditMode = true;
+                    
+                    // Ensure categories is an array of integers
+                    let categoryIds = [];
+                    if (movie.categories && Array.isArray(movie.categories)) {
+                        categoryIds = movie.categories.map(cat => {
+                            // If it's already a number, use it; otherwise parse it
+                            return typeof cat === 'number' ? cat : parseInt(cat);
+                        }).filter(id => !isNaN(id));
+                    }
+                    
+                    console.log('Processed category IDs:', categoryIds);
+                    
                     this.formData = {
                         movieId: movie.movieId,
                         title: movie.title,
@@ -517,8 +533,9 @@
                         trailerUrl: movie.trailerUrl || '',
                         isNew: movie.isNew || false,
                         isFeatured: movie.isFeatured || false,
-                        categories: movie.categories || []
+                        categories: categoryIds
                     };
+                    
                     this.showModal = true;
                     // Use $nextTick to ensure modal is rendered before updating preview
                     this.$nextTick(() => {
@@ -628,6 +645,9 @@
 
                 async saveMovie() {
                     try {
+                        console.log('Saving movie with data:', this.formData);
+                        console.log('Categories to save:', this.formData.categories);
+                        
                         const url = this.isEditMode 
                             ? `../api/movies?id=` + this.formData.movieId
                             : '../api/movies';
@@ -643,8 +663,13 @@
                         });
 
                         if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Server response:', errorText);
                             throw new Error('Failed to save movie');
                         }
+
+                        const result = await response.json();
+                        console.log('Save result:', result);
 
                         this.showToast('success', this.isEditMode ? 'Movie berhasil diperbarui' : 'Movie berhasil ditambahkan');
                         this.closeModal();

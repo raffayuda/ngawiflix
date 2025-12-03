@@ -143,7 +143,32 @@ public class MovieDAO {
             movie.setGenres(new ArrayList<>());
         }
         
+        // Load category IDs for the movie - use separate connection
+        List<Integer> categoryIds = getMovieCategoryIds(movie.getMovieId());
+        movie.setCategories(categoryIds);
+        
         return movie;
+    }
+    
+    private List<Integer> getMovieCategoryIds(int movieId) {
+        List<Integer> categoryIds = new ArrayList<>();
+        String sql = "SELECT category_id FROM movie_categories WHERE movie_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, movieId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    categoryIds.add(rs.getInt("category_id"));
+                }
+            }
+            System.out.println("Movie ID " + movieId + " has categories: " + categoryIds);
+        } catch (SQLException e) {
+            System.err.println("Error loading category IDs for movie " + movieId);
+            e.printStackTrace();
+        }
+        
+        return categoryIds;
     }
     
     public boolean createMovie(Movie movie) throws SQLException {

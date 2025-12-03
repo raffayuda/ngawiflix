@@ -48,6 +48,8 @@ public class MovieServlet extends HttpServlet {
             if (movieIdParam != null) {
                 int movieId = Integer.parseInt(movieIdParam);
                 Movie movie = movieDAO.getMovieById(movieId);
+                System.out.println("Getting movie by ID: " + movieId);
+                System.out.println("Movie categories: " + movie.getCategories());
                 out.print(gson.toJson(movie));
                 return;
             } else if ("featured".equals(action)) {
@@ -58,6 +60,11 @@ public class MovieServlet extends HttpServlet {
                 movies = movieDAO.searchMovies(search);
             } else {
                 movies = movieDAO.getAllMovies();
+            }
+            
+            // Log categories for debugging
+            if (!movies.isEmpty()) {
+                System.out.println("First movie categories: " + movies.get(0).getCategories());
             }
             
             out.print(gson.toJson(movies));

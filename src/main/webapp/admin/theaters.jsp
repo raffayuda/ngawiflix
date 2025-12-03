@@ -234,7 +234,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 transform translate-x-0"
              x-transition:leave-end="opacity-0 transform translate-x-full"
-             class="fixed top-4 right-4 z-50 max-w-sm w-full"
+             class="fixed bottom-4 right-4 z-50 max-w-sm w-full"
              style="display: none;">
             <div class="rounded-lg shadow-lg p-4 flex items-center gap-3"
                  :class="{
