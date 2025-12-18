@@ -1,4 +1,4 @@
-package com.cinemax.servlet;
+package com.cinemax.controller;
 
 import com.cinemax.dao.TheaterDAO;
 import com.cinemax.model.Theater;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/theaters")
-public class TheaterServlet extends HttpServlet {
+public class TheaterController extends HttpServlet {
     private TheaterDAO theaterDAO;
     private Gson gson;
     

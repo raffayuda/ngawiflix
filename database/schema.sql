@@ -22,9 +22,9 @@ CREATE TABLE movies (
     movie_id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    poster_url VARCHAR(500),
-    backdrop_url VARCHAR(500),
-    trailer_url VARCHAR(500),
+    poster_url TEXT,
+    backdrop_url TEXT,
+    trailer_url TEXT,
     director VARCHAR(100),
     duration INTEGER, -- in minutes
     rating DECIMAL(2,1) CHECK (rating >= 0 AND rating <= 10),

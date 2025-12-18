@@ -1,4 +1,4 @@
-package com.cinemax.servlet;
+package com.cinemax.controller;
 
 import com.cinemax.dao.SeatDAO;
 import com.cinemax.model.Seat;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @WebServlet("/api/seats")
-public class SeatServlet extends HttpServlet {
+public class SeatController extends HttpServlet {
     private SeatDAO seatDAO;
     private Gson gson;
     

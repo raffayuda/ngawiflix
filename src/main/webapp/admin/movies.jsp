@@ -153,10 +153,41 @@
         .fade-in {
             animation: fadeIn 0.3s ease;
         }
+        
+        /* Mobile Sidebar */
+        @media (max-width: 1024px) {
+            .sidebar-mobile {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                z-index: 50;
+                transition: left 0.3s ease;
+            }
+            .sidebar-mobile.active {
+                left: 0;
+            }
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+                display: none;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
     <div x-data="moviesAdmin()" class="flex h-screen overflow-hidden">
+        <!-- Mobile Menu Overlay -->
+        <div class="sidebar-overlay" :class="{ 'active': mobileMenuOpen }" @click="mobileMenuOpen = false"></div>
+        
         <!-- Sidebar -->
         <jsp:include page="../component/admin/sidebar.jsp" />
 
@@ -164,13 +195,19 @@
         <div class="flex-1 overflow-auto scrollbar-minimal bg-gray-50">
             <!-- Header -->
             <div class="header-section sticky top-0 z-10">
-                <div class="p-6">
+                <div class="p-4 md:p-6">
+                    <div class="flex items-center gap-4 mb-4 lg:hidden">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars text-xl text-gray-700"></i>
+                        </button>
+                        <h2 class="text-xl font-bold text-gray-900">Manajemen Film</h2>
+                    </div>
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div class="fade-in">
-                            <h2 class="text-3xl font-bold text-gray-900 mb-1">Manajemen Film</h2>
+                        <div class="fade-in hidden lg:block">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1">Manajemen Film</h2>
                             <p class="text-gray-600 text-sm">Kelola semua film dalam sistem</p>
                         </div>
-                        <button @click="openAddModal()" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                        <button @click="openAddModal()" class="btn-primary text-white px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold flex items-center gap-2 text-sm md:text-base">
                             <i class="fas fa-plus"></i>
                             <span>Tambah Film</span>
                         </button>
@@ -386,19 +423,35 @@
                         <!-- Right Column -->
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Poster URL *</label>
-                                <input type="url" x-model="formData.posterUrl" required
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Poster <span x-show="!isEditMode">*</span>
+                                </label>
+                                <input type="file" 
+                                       @change="handlePosterUpload($event)"
+                                       accept="image/*"
+                                       :required="!isEditMode"
                                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
-                                <img x-show="formData.posterUrl" :src="formData.posterUrl" 
-                                     class="mt-2 w-32 h-48 object-cover rounded">
+                                <p class="text-xs text-gray-500 mt-1" x-show="isEditMode">Kosongkan jika tidak ingin mengubah poster</p>
+                                <div x-show="posterPreview" class="mt-2">
+                                    <img :src="posterPreview" 
+                                         class="w-32 h-48 object-cover rounded border">
+                                </div>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Backdrop URL *</label>
-                                <input type="url" x-model="formData.backdropUrl" required
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Backdrop <span x-show="!isEditMode">*</span>
+                                </label>
+                                <input type="file" 
+                                       @change="handleBackdropUpload($event)"
+                                       accept="image/*"
+                                       :required="!isEditMode"
                                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
-                                <img x-show="formData.backdropUrl" :src="formData.backdropUrl" 
-                                     class="mt-2 w-full h-24 object-cover rounded">
+                                <p class="text-xs text-gray-500 mt-1" x-show="isEditMode">Kosongkan jika tidak ingin mengubah backdrop</p>
+                                <div x-show="backdropPreview" class="mt-2">
+                                    <img :src="backdropPreview" 
+                                         class="w-full h-24 object-cover rounded border">
+                                </div>
                             </div>
                             
                             <div>
@@ -541,6 +594,7 @@
     <script>
         function moviesAdmin() {
             return {
+                mobileMenuOpen: false,
                 movies: [],
                 filteredMovies: [],
                 categories: [],
@@ -552,6 +606,8 @@
                 filterCategory: '',
                 movieToDelete: null,
                 trailerEmbedUrl: '',
+                posterPreview: '',
+                backdropPreview: '',
                 toast: {
                     show: false,
                     message: '',
@@ -577,6 +633,12 @@
                 init() {
                     this.loadMovies();
                     this.loadCategories();
+                    // Close mobile menu when window is resized to desktop
+                    window.addEventListener('resize', () => {
+                        if (window.innerWidth >= 1024) {
+                            this.mobileMenuOpen = false;
+                        }
+                    });
                 },
 
                 async loadMovies() {
@@ -627,6 +689,58 @@
                     this.filteredMovies = filtered;
                 },
 
+                handlePosterUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        // Validate file type
+                        if (!file.type.startsWith('image/')) {
+                            this.showToast('error', 'File harus berupa gambar');
+                            event.target.value = '';
+                            return;
+                        }
+                        
+                        // Validate file size (max 5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            this.showToast('error', 'Ukuran file maksimal 5MB');
+                            event.target.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.posterPreview = e.target.result;
+                            this.formData.posterUrl = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+
+                handleBackdropUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        // Validate file type
+                        if (!file.type.startsWith('image/')) {
+                            this.showToast('error', 'File harus berupa gambar');
+                            event.target.value = '';
+                            return;
+                        }
+                        
+                        // Validate file size (max 5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            this.showToast('error', 'Ukuran file maksimal 5MB');
+                            event.target.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.backdropPreview = e.target.result;
+                            this.formData.backdropUrl = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+
                 openAddModal() {
                     this.isEditMode = false;
                     this.resetForm();
@@ -666,6 +780,10 @@
                         isFeatured: movie.isFeatured || false,
                         categories: categoryIds
                     };
+                    
+                    // Set preview for existing images
+                    this.posterPreview = movie.posterUrl;
+                    this.backdropPreview = movie.backdropUrl;
                     
                     this.showModal = true;
                     // Use $nextTick to ensure modal is rendered before updating preview
@@ -772,6 +890,8 @@
                         categories: []
                     };
                     this.trailerEmbedUrl = '';
+                    this.posterPreview = '';
+                    this.backdropPreview = '';
                 },
 
                 async saveMovie() {

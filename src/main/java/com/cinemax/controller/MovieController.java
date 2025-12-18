@@ -1,4 +1,4 @@
-package com.cinemax.servlet;
+package com.cinemax.controller;
 
 import com.cinemax.dao.MovieDAO;
 import com.cinemax.model.Movie;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/movies")
-public class MovieServlet extends HttpServlet {
+public class MovieController extends HttpServlet {
     private MovieDAO movieDAO;
     private Gson gson;
     

@@ -1,4 +1,4 @@
-package com.cinemax.servlet;
+package com.cinemax.controller;
 
 import com.cinemax.dao.CategoryDAO;
 import com.cinemax.model.Category;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/categories")
-public class CategoryServlet extends HttpServlet {
+public class CategoryController extends HttpServlet {
     private CategoryDAO categoryDAO;
     private Gson gson;
     

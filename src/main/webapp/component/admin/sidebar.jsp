@@ -1,7 +1,8 @@
-<div class="w-72 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
+<div class="sidebar-mobile w-72 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl lg:relative lg:left-0" :class="{ 'active': mobileMenuOpen }">
     <div class="p-6 h-full flex flex-col">
-        <div class="mb-8 pb-6 border-b border-slate-700">
-            <div class="flex items-center gap-3 mb-2">
+        <!-- Close button for mobile -->
+        <div class="flex items-center justify-between mb-6 lg:mb-0">
+            <div class="flex items-center gap-3">
                 <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
                     <i class="fas fa-film text-white text-xl"></i>
                 </div>
@@ -10,7 +11,12 @@
                     <p class="text-xs text-gray-400 font-medium">Admin Dashboard</p>
                 </div>
             </div>
+            <button @click="mobileMenuOpen = false" class="lg:hidden p-2 rounded-lg hover:bg-slate-700/50">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
+        
+        <div class="border-b border-slate-700 mb-6 pb-6 lg:block hidden"></div>
         
         <nav class="space-y-1 flex-1">
             <a href="admin.jsp" class="sidebar-link flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-slate-700/50" data-page="admin">

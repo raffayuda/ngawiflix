@@ -1,4 +1,4 @@
-package com.cinemax.servlet;
+package com.cinemax.controller;
 
 import com.cinemax.dao.BookingDAO;
 import com.cinemax.dao.ScheduleDAO;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/bookings")
-public class BookingServlet extends HttpServlet {
+public class BookingController extends HttpServlet {
     private BookingDAO bookingDAO;
     private ScheduleDAO scheduleDAO;
     private Gson gson;

@@ -1,4 +1,4 @@
-package com.cinemax.servlet;
+package com.cinemax.controller;
 
 import com.cinemax.dao.ScheduleDAO;
 import com.cinemax.model.Schedule;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/schedules")
-public class ScheduleServlet extends HttpServlet {
+public class ScheduleController extends HttpServlet {
     private ScheduleDAO scheduleDAO;
     private Gson gson;
     
