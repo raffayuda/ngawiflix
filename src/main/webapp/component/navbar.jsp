@@ -10,7 +10,7 @@
                         <i class="fas fa-film text-2xl"></i>
                     </div>
                     <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
-                        AnjayNobar
+                        CineGO
                     </span>
                 </div>
                 

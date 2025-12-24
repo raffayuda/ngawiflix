@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnjayNobar - Pesan Tiket Bioskop Online</title>
+    <title>CineGO - Pesan Tiket Bioskop Online</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -603,7 +603,7 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between">
                                     <span class="text-gray-400">Kursi yang dipilih:</span>
-                                    <span class="font-semibold" x-text="selectedSeats.join(', ')"></span>
+                                    <span class="font-semibold" x-text="selectedSeats.length > 0 ? selectedSeats.join(', ') : '-'"></span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-400">Jumlah Tiket:</span>
@@ -1058,6 +1058,14 @@
                     await this.loadCategories();
                     await this.loadMovies();
                     await this.loadFeaturedMovies();
+                    
+                    // Check if redirected from logout
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('logout') === 'success') {
+                        this.showToast('success', 'Logout berhasil! Sampai jumpa lagi');
+                        // Remove parameter from URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
                 },
                 
                 // Load categories from database
@@ -1370,21 +1378,37 @@
                 
                 // Toggle seat selection
                 toggleSeat(row, seatNumber) {
+                    console.log('toggleSeat called with row:', row, 'seatNumber:', seatNumber);
+                    
                     const rowIndex = this.seats.findIndex(r => r.row === row);
+                    if (rowIndex === -1) {
+                        console.error('Row not found:', row);
+                        return;
+                    }
+                    
                     const seat = this.seats[rowIndex].seats.find(s => s.number === seatNumber);
+                    if (!seat) {
+                        console.error('Seat not found:', seatNumber, 'in row', row);
+                        console.log('Available seats in row:', this.seats[rowIndex].seats);
+                        return;
+                    }
                     
                     if (seat.status === 'occupied') return;
                     
-                    const seatCode = `${row}${seatNumber}`;
+                    const seatCode = row + seatNumber;
+                    console.log('Generated seatCode:', seatCode, 'from row:', row, 'seatNumber:', seatNumber);
+                    console.log('Type of row:', typeof row, 'Type of seatNumber:', typeof seatNumber);
                     
                     if (seat.status === 'available') {
                         seat.status = 'selected';
                         this.selectedSeats.push(seatCode);
                         this.selectedSeatIds.push(seat.seatId);
+                        console.log('Seat selected:', seatCode, 'Total selected:', this.selectedSeats);
                     } else if (seat.status === 'selected') {
                         seat.status = 'available';
                         this.selectedSeats = this.selectedSeats.filter(s => s !== seatCode);
                         this.selectedSeatIds = this.selectedSeatIds.filter(id => id !== seat.seatId);
+                        console.log('Seat deselected:', seatCode, 'Total selected:', this.selectedSeats);
                     }
                 },
                 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiket Saya - AnjayNobar</title>
+    <title>Tiket Saya - CineGO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -107,7 +107,7 @@
                                     </div>
                                     
                                     <template x-if="currentUser.role === 'admin'">
-                                        <a href="admin.jsp" class="block px-4 py-2 hover:bg-slate-700 transition">
+                                        <a href="admin/admin.jsp" class="block px-4 py-2 hover:bg-slate-700 transition">
                                             <i class="fas fa-cog mr-2"></i> Panel Admin
                                         </a>
                                     </template>
@@ -407,7 +407,7 @@
                     doc.setTextColor(255, 255, 255);
                     doc.setFontSize(24);
                     doc.setFont(undefined, 'bold');
-                    doc.text('ANJAYNOBAR', 10, 15);
+                    doc.text('CINEGO', 10, 15);
                     
                     // Ticket Title
                     doc.setFontSize(10);
@@ -444,6 +444,12 @@
                     const leftCol = 10;
                     const lineHeight = 7;
                     
+                    // Seats
+                    doc.setFont(undefined, 'bold');
+                    doc.text('KURSI', leftCol, yPos);
+                    doc.setFont(undefined, 'normal');
+                    const seats = ticket.seatCodes ? ticket.seatCodes.join(', ') : '-';
+                    doc.text(seats, leftCol, yPos + 4);
                     
                     // Time
                     yPos += lineHeight + 4;
@@ -457,18 +463,18 @@
                     doc.setFont(undefined, 'bold');
                     doc.text('BIOSKOP', leftCol, yPos);
                     doc.setFont(undefined, 'normal');
-                    doc.text(ticket.theaterName || 'AnjayNobar Theater', leftCol, yPos + 4);
+                    doc.text(ticket.theaterName || 'CineGO Theater', leftCol, yPos + 4);
                     
                     // Middle Column
                     const midCol = 70;
                     yPos = 60;
                     
                     // Seats
-                    doc.setFont(undefined, 'bold');
-                    doc.text('KURSI', midCol, yPos);
-                    doc.setFont(undefined, 'normal');
-                    const seats = ticket.seatCodes ? ticket.seatCodes.join(', ') : '-';
-                    doc.text(seats, midCol, yPos + 4);
+                    // doc.setFont(undefined, 'bold');
+                    // doc.text('KURSI', midCol, yPos);
+                    // doc.setFont(undefined, 'normal');
+                    // const seats = ticket.seatCodes ? ticket.seatCodes.join(', ') : '-';
+                    // doc.text(seats, midCol, yPos + 4);
                     
                     // Quantity
                     yPos += lineHeight + 4;

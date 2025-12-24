@@ -80,11 +80,22 @@ public class AuthController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        String action = request.getParameter("action");
+        
+        if ("logout".equals(action)) {
+            // Handle logout via GET request and redirect to index
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
+        }
+        
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         
-        String action = request.getParameter("action");
         Map<String, Object> result = new HashMap<>();
         
         if ("check".equals(action)) {

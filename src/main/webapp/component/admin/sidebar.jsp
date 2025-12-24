@@ -7,7 +7,7 @@
                     <i class="fas fa-film text-white text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">AnjayNobar</h1>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">CineGO</h1>
                     <p class="text-xs text-gray-400 font-medium">Admin Dashboard</p>
                 </div>
             </div>
@@ -90,10 +90,25 @@ function setActiveMenu() {
 // Jalankan fungsi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', setActiveMenu);
 
-// Fungsi logout (contoh)
-function logout() {
+// Fungsi logout
+async function logout() {
     if (confirm('Apakah Anda yakin ingin logout?')) {
-        window.location.href = '../logout.jsp';
+        try {
+            const response = await fetch('../api/auth?action=logout', {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Redirect ke halaman utama dengan parameter logout success
+                window.location.href = '../index.jsp?logout=success';
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+            // Tetap redirect ke halaman utama meskipun ada error
+            window.location.href = '../index.jsp?logout=success';
+        }
     }
 }
 </script>
