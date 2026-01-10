@@ -15,10 +15,11 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="index.jsp" class="hover:text-red-500 transition">Beranda</a>
-                <a href="index.jsp#movies" class="hover:text-red-500 transition">Film</a>
-                <a href="tentang-kami.jsp" class="hover:text-red-500 transition">Tentang Kami</a>
-                <a href="galeri.jsp" class="hover:text-red-500 transition">Galeri</a>
+                <a href="index.jsp" class="nav-link hover:text-red-500 transition" data-page="index">Beranda</a>
+                <a href="index.jsp#movies" class="nav-link hover:text-red-500 transition" data-page="index">Film</a>
+                <a href="tentang-kami.jsp" class="nav-link hover:text-red-500 transition"
+                    data-page="tentang-kami">Tentang Kami</a>
+                <a href="galeri.jsp" class="nav-link hover:text-red-500 transition" data-page="galeri">Galeri</a>
             </div>
 
             <!-- Right Menu -->
@@ -87,13 +88,60 @@
     <!-- Mobile Menu -->
     <div x-show="mobileMenu" x-transition class="md:hidden bg-slate-900 border-t border-slate-800">
         <div class="container mx-auto px-4 py-4 space-y-3">
-            <a href="#home" class="block py-2 hover:text-red-500 transition">Beranda</a>
-            <a href="#movies" class="block py-2 hover:text-red-500 transition">Film</a>
-            <a href="tentang-kami.jsp" class="block py-2 hover:text-red-500 transition">Tentang Kami</a>
-            <a href="galeri.jsp" class="block py-2 hover:text-red-500 transition">Galeri</a>
+            <a href="index.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition"
+                data-page="index">Beranda</a>
+            <a href="index.jsp#movies" class="nav-link-mobile block py-2 hover:text-red-500 transition"
+                data-page="index">Film</a>
+            <a href="tentang-kami.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition"
+                data-page="tentang-kami">Tentang Kami</a>
+            <a href="galeri.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition"
+                data-page="galeri">Galeri</a>
             <button class="w-full px-6 py-2 bg-gradient-to-r from-red-500 to-red-700 rounded-lg">
                 <i class="fas fa-user mr-2"></i>Masuk
             </button>
         </div>
     </div>
+
+    <style>
+        .nav-link.active,
+        .nav-link-mobile.active {
+            color: #ef4444;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, #ef4444, #dc2626);
+            border-radius: 2px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get current page name from URL
+            const currentPage = window.location.pathname.split('/').pop().replace('.jsp', '') || 'index';
+
+            // Add active class to matching nav links (desktop)
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const linkPage = link.getAttribute('data-page');
+                if (linkPage === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Add active class to matching nav links (mobile)
+            document.querySelectorAll('.nav-link-mobile').forEach(link => {
+                const linkPage = link.getAttribute('data-page');
+                if (linkPage === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </nav>
