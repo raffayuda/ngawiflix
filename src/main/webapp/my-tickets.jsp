@@ -76,69 +76,10 @@
 <body>
     <div x-data="ticketsApp()" x-init="init()">
         <!-- Navbar -->
-        <nav class="bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <!-- Logo -->
-                    <a href="index.jsp" class="flex items-center space-x-2">
-                        <i class="fas fa-film text-3xl text-red-600"></i>
-                        <span class="text-2xl font-bold">Anjay<span class="text-red-600">Nobar</span></span>
-                    </a>
-                    
-                    <!-- User Menu -->
-                    <div class="flex items-center space-x-4">
-                        <template x-if="currentUser">
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" 
-                                        class="flex items-center space-x-2 bg-slate-800 px-4 py-2 rounded-lg hover:bg-slate-700 transition">
-                                    <i class="fas fa-user-circle text-xl"></i>
-                                    <span x-text="currentUser.username"></span>
-                                    <i class="fas fa-chevron-down text-sm"></i>
-                                </button>
-                                
-                                <div x-show="open" 
-                                     @click.away="open = false"
-                                     x-cloak
-                                     x-transition
-                                     class="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl py-2 border border-slate-700">
-                                    <div class="px-4 py-2 border-b border-slate-700">
-                                        <p class="text-sm text-gray-400">Login sebagai</p>
-                                        <p class="font-semibold" x-text="currentUser.role.toUpperCase()"></p>
-                                    </div>
-                                    
-                                    <template x-if="currentUser.role === 'admin'">
-                                        <a href="admin/admin.jsp" class="block px-4 py-2 hover:bg-slate-700 transition">
-                                            <i class="fas fa-cog mr-2"></i> Panel Admin
-                                        </a>
-                                    </template>
-                                    
-                                    <a href="index.jsp" class="block px-4 py-2 hover:bg-slate-700 transition">
-                                        <i class="fas fa-home mr-2"></i> Beranda
-                                    </a>
-                                    
-                                    <a href="my-tickets.jsp" class="block px-4 py-2 bg-slate-700">
-                                        <i class="fas fa-ticket-alt mr-2"></i> Tiket Saya
-                                    </a>
-                                    
-                                    <button @click="logout()" class="w-full text-left px-4 py-2 hover:bg-slate-700 transition text-red-500">
-                                        <i class="fas fa-sign-out-alt mr-2"></i> Keluar
-                                    </button>
-                                </div>
-                            </div>
-                        </template>
-                        
-                        <template x-if="!currentUser">
-                            <a href="index.jsp" class="px-6 py-2 btn-primary rounded-lg font-semibold">
-                                <i class="fas fa-sign-in-alt mr-2"></i> Masuk
-                            </a>
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <jsp:include page="component/navbar.jsp" />
 
         <!-- Main Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto my-24 px-4 sm:px-6 lg:px-8 py-8">
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-4xl font-bold mb-2">
