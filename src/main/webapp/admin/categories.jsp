@@ -225,7 +225,7 @@
              style="display: none;">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md m-4">
                 <div class="p-6 border-b flex justify-between items-center">
-                    <h3 class="text-xl font-bold" x-text="isEditMode ? 'Edit Category' : 'Add New Category'"></h3>
+                    <h3 class="text-xl font-bold" x-text="isEditMode ? 'Edit Kategori' : 'Tambah Kategori'"></h3>
                     <button @click="closeModal()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
@@ -234,7 +234,7 @@
                 <form @submit.prevent="saveCategory()" class="p-6">
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Category Name *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Kategori *</label>
                             <input type="text" x-model="formData.categoryName" required
                                    placeholder="e.g., action, drama, comedy"
                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
@@ -244,11 +244,11 @@
                     <div class="mt-6 flex justify-end gap-3 border-t pt-4">
                         <button type="button" @click="closeModal()" 
                                 class="px-6 py-2 border rounded-lg hover:bg-gray-50">
-                            Cancel
+                            Batal
                         </button>
                         <button type="submit" 
                                 class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                            <span x-text="isEditMode ? 'Update Category' : 'Add Category'"></span>
+                            <span x-text="isEditMode ? 'Update Kategori' : 'Tambah Kategori'"></span>
                         </button>
                     </div>
                 </form>
@@ -261,19 +261,19 @@
             <div class="bg-white rounded-lg shadow-xl p-6 max-w-md">
                 <div class="text-center">
                     <i class="fas fa-exclamation-triangle text-red-500 text-5xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Delete Category?</h3>
+                    <h3 class="text-xl font-bold mb-2">Hapus Kategori?</h3>
                     <p class="text-gray-600 mb-6">
-                        Are you sure you want to delete "<span x-text="categoryToDelete?.categoryName"></span>"? 
-                        This action cannot be undone.
+                        Apakah anda yakin ingin menghapus "<span x-text="categoryToDelete?.categoryName"></span>"? 
+                        Aksi ini tidak dapat diurangi.
                     </p>
                     <div class="flex gap-3 justify-center">
                         <button @click="showDeleteModal = false" 
                                 class="px-6 py-2 border rounded-lg hover:bg-gray-50">
-                            Cancel
+                            Batal
                         </button>
                         <button @click="deleteCategory()" 
                                 class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                            Delete
+                            Hapus
                         </button>
                     </div>
                 </div>
@@ -477,4 +477,3 @@
     </script>
 </body>
 </html>
-

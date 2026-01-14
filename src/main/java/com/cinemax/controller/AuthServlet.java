@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/api/auth")
-public class AuthController extends HttpServlet {
+public class AuthServlet extends HttpServlet {
 
     private UserDAO userDAO;
     private Gson gson;

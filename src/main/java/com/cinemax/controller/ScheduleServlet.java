@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/schedules")
-public class ScheduleController extends HttpServlet {
+public class ScheduleServlet extends HttpServlet {
     private ScheduleDAO scheduleDAO;
     private Gson gson;
     

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/movies")
-public class MovieController extends HttpServlet {
+public class MovieServlet extends HttpServlet {
     private MovieDAO movieDAO;
     private Gson gson;
     

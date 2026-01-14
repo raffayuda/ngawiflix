@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/api/bookings")
-public class BookingController extends HttpServlet {
+public class BookingServlet extends HttpServlet {
     private BookingDAO bookingDAO;
     private ScheduleDAO scheduleDAO;
     private Gson gson;

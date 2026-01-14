@@ -229,7 +229,7 @@
              style="display: none;">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md m-4">
                 <div class="p-6 border-b flex justify-between items-center">
-                    <h3 class="text-xl font-bold" x-text="isEditMode ? 'Edit Theater' : 'Add New Theater'"></h3>
+                    <h3 class="text-xl font-bold" x-text="isEditMode ? 'Edit Bioskop' : 'Tambah Bioskop'"></h3>
                     <button @click="closeModal()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
@@ -238,21 +238,21 @@
                 <form @submit.prevent="saveTheater()" class="p-6">
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Theater Name *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Bioskop *</label>
                             <input type="text" x-model="formData.theaterName" required
                                    placeholder="e.g., Theater 1, IMAX Theater"
                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Location *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi *</label>
                             <input type="text" x-model="formData.location" required
                                    placeholder="e.g., Lantai 2, Lantai 3"
                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Seats *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah kursi *</label>
                             <input type="number" x-model="formData.totalSeats" required min="1"
                                    placeholder="e.g., 80, 100, 120"
                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500">
@@ -266,7 +266,7 @@
                         </button>
                         <button type="submit" 
                                 class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                            <span x-text="isEditMode ? 'Update Theater' : 'Add Theater'"></span>
+                            <span x-text="isEditMode ? 'Update Bioskop' : 'Tambah Bioskop'"></span>
                         </button>
                     </div>
                 </form>
@@ -279,19 +279,19 @@
             <div class="bg-white rounded-lg shadow-xl p-6 max-w-md">
                 <div class="text-center">
                     <i class="fas fa-exclamation-triangle text-red-500 text-5xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Delete Theater?</h3>
+                    <h3 class="text-xl font-bold mb-2">Hapus Bioskop?</h3>
                     <p class="text-gray-600 mb-6">
-                        Are you sure you want to delete "<span x-text="theaterToDelete?.theaterName"></span>"? 
-                        This action cannot be undone and will also delete all associated schedules.
+                        Apakah anda yakin ingin menghapus "<span x-text="theaterToDelete?.theaterName"></span>"? 
+                        Aksi ini tidak dapat diurangi dan akan menghapus semua jadwal yang terkait.
                     </p>
                     <div class="flex gap-3 justify-center">
                         <button @click="showDeleteModal = false" 
                                 class="px-6 py-2 border rounded-lg hover:bg-gray-50">
-                            Cancel
+                            Batal
                         </button>
                         <button @click="deleteTheater()" 
                                 class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                            Delete
+                            Hapus
                         </button>
                     </div>
                 </div>
@@ -503,4 +503,3 @@
     
 </body>
 </html>
-

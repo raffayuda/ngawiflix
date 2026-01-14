@@ -151,6 +151,58 @@
             </div>
         </section>
 
+        <!-- Tech Stack Section -->
+        <section class="py-20 bg-slate-900/50">
+            <div class="container mx-auto px-4 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4">
+                        <i class="fas fa-code text-red-500 mr-3"></i>
+                        Teknologi yang Digunakan
+                    </h2>
+                    <p class="text-gray-400 text-lg">Stack teknologi dalam pengembangan CineGO</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-5xl mx-auto">
+                    <!-- Java -->
+                    <div
+                        class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center hover:border-red-500 hover:transform hover:-translate-y-2 transition-all group">
+                        <i class="fab fa-java text-5xl text-orange-500 mb-4 group-hover:scale-110 transition"></i>
+                        <div class="font-semibold">Java</div>
+                        <div class="text-xs text-gray-500 mt-1">Backend</div>
+                    </div>
+                    <!-- PostgreSQL -->
+                    <div
+                        class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center hover:border-red-500 hover:transform hover:-translate-y-2 transition-all group">
+                        <i class="fas fa-database text-5xl text-blue-500 mb-4 group-hover:scale-110 transition"></i>
+                        <div class="font-semibold">PostgreSQL</div>
+                        <div class="text-xs text-gray-500 mt-1">Database</div>
+                    </div>
+                    <!-- HTML -->
+                    <div
+                        class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center hover:border-red-500 hover:transform hover:-translate-y-2 transition-all group">
+                        <i class="fab fa-html5 text-5xl text-orange-600 mb-4 group-hover:scale-110 transition"></i>
+                        <div class="font-semibold">HTML5</div>
+                        <div class="text-xs text-gray-500 mt-1">Struktur</div>
+                    </div>
+                    <!-- Alpine.JS -->
+                    <div
+                        class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center hover:border-red-500 hover:transform hover:-translate-y-2 transition-all group">
+                        <i class="fab fa-js text-5xl text-yellow-500 mb-4 group-hover:scale-110 transition"></i>
+                        <div class="font-semibold">JavaScript</div>
+                        <div class="text-xs text-gray-500 mt-1">Interaktif</div>
+                    </div>
+                    <!-- Tailwind -->
+                    <div
+                        class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center hover:border-red-500 hover:transform hover:-translate-y-2 transition-all group">
+                        <i class="fas fa-wind text-5xl text-cyan-500 mb-4 group-hover:scale-110 transition"></i>
+                        <div class="font-semibold">Tailwind</div>
+                        <div class="text-xs text-gray-500 mt-1">CSS Framework</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
         <!-- Team Section -->
         <section class="py-20">
             <div class="container mx-auto px-4 lg:px-8">
@@ -165,7 +217,8 @@
                         <div class="relative inline-block mb-4">
                             <div
                                 class="w-28 h-28 rounded-lg bg-gradient-to-br from-red-500 to-red-900 flex items-center justify-center text-4xl font-bold mx-auto">
-                                <img src="./assets/raffa.png" class="w-[95%] h-[95%] object-cover rounded-lg" alt="Raffa Yuda Pratama">
+                                <img src="./assets/raffa.png" class="w-[95%] h-[95%] object-cover rounded-lg"
+                                    alt="Raffa Yuda Pratama">
                             </div>
                         </div>
                         <h3 class="text-xl font-bold mb-2">Raffa Yuda Pratama</h3>
@@ -188,7 +241,8 @@
                         <div class="relative inline-block mb-4">
                             <div
                                 class="w-28 h-28 rounded-lg bg-gradient-to-br from-blue-500 to-blue-900 flex items-center justify-center text-4xl font-bold mx-auto">
-                                <img src="./assets/hamizan.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg" alt="Ahmad Hamizan">
+                                <img src="./assets/hamizan.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg"
+                                    alt="Ahmad Hamizan">
                             </div>
                         </div>
                         <h3 class="text-xl font-bold mb-2">Ahmad Hamizan</h3>
@@ -211,7 +265,8 @@
                         <div class="relative inline-block mb-4">
                             <div
                                 class="w-28 h-28 rounded-lg bg-gradient-to-br from-purple-500 to-purple-900 flex items-center justify-center text-4xl font-bold mx-auto">
-                                <img src="./assets/wahyu.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg" alt="Wahyu Ahmad Yassin">
+                                <img src="./assets/wahyu.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg"
+                                    alt="Wahyu Ahmad Yassin">
                             </div>
                         </div>
                         <h3 class="text-xl font-bold mb-2">Wahyu Ahmad Yassin</h3>
@@ -234,7 +289,8 @@
                         <div class="relative inline-block mb-4">
                             <div
                                 class="w-28 h-28 rounded-lg bg-gradient-to-br from-green-500 to-green-900 flex items-center justify-center text-4xl font-bold mx-auto">
-                                <img src="./assets/ipul.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg" alt="Syaiful Ilham">
+                                <img src="./assets/ipul.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg"
+                                    alt="Syaiful Ilham">
                             </div>
                         </div>
                         <h3 class="text-xl font-bold mb-2">Syaiful Ilham</h3>
@@ -257,7 +313,8 @@
                         <div class="relative inline-block mb-4">
                             <div
                                 class="w-28 h-28 rounded-lg bg-gradient-to-br from-green-500 to-green-900 flex items-center justify-center text-4xl font-bold mx-auto">
-                                <img src="./assets/zahra2.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg" alt="Zahra Aulia Rahmani">
+                                <img src="./assets/zahra2.jpeg" class="w-[95%] h-[95%] object-cover rounded-lg"
+                                    alt="Zahra Aulia Rahmani">
                             </div>
                         </div>
                         <h3 class="text-xl font-bold mb-2">Zahra Aulia Rahmani</h3>
@@ -278,6 +335,7 @@
             </div>
         </section>
 
+        
         <!-- Footer -->
         <footer class="bg-slate-900 border-t border-slate-800 py-12">
             <div class="container mx-auto px-4 lg:px-8">

@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @WebServlet("/api/seats")
-public class SeatController extends HttpServlet {
+public class SeatServlet extends HttpServlet {
     private SeatDAO seatDAO;
     private Gson gson;
     

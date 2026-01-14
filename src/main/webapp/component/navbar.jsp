@@ -17,8 +17,7 @@
             <div class="hidden md:flex items-center space-x-8">
                 <a href="index.jsp" class="nav-link hover:text-red-500 transition" data-page="index"
                     data-hash="">Beranda</a>
-                <a href="index.jsp#movies" class="nav-link hover:text-red-500 transition" data-page="index"
-                    data-hash="movies">Film</a>
+                <a href="film.jsp" class="nav-link hover:text-red-500 transition" data-page="film" data-hash="">Film</a>
                 <a href="tentang-kami.jsp" class="nav-link hover:text-red-500 transition"
                     data-page="tentang-kami">Tentang Kami</a>
                 <a href="galeri.jsp" class="nav-link hover:text-red-500 transition" data-page="galeri">Galeri</a>
@@ -95,8 +94,8 @@
         <div class="container mx-auto px-4 py-4 space-y-3">
             <a href="index.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition" data-page="index"
                 data-hash="">Beranda</a>
-            <a href="index.jsp#movies" class="nav-link-mobile block py-2 hover:text-red-500 transition"
-                data-page="index" data-hash="movies">Film</a>
+            <a href="film.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition" data-page="film"
+                data-hash="">Film</a>
             <a href="tentang-kami.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition"
                 data-page="tentang-kami">Tentang Kami</a>
             <a href="galeri.jsp" class="nav-link-mobile block py-2 hover:text-red-500 transition"
